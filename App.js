@@ -6,11 +6,12 @@ import GameScreen from "./screens/GameScreen";
 import GameOverScreen from "./screens/GameOverScreen";
 import { useFonts } from "expo-font";
 import AppLoading from "expo-app-loading";
+import { StatusBar } from "expo-status-bar";
 
 export default function App() {
     const [pickedNumber, setPickedNumber] = useState();
     const [isGameOver, setIsGameOver] = useState(true);
-    const [guessRounds, setGuessRounds] = useState(0)
+    const [guessRounds, setGuessRounds] = useState(0);
 
     const [fontLoaded] = useFonts({
         "open-sans": require("./assets/OpenSans-Regular.ttf"),
@@ -18,7 +19,7 @@ export default function App() {
     });
 
     if (!fontLoaded) return <AppLoading />;
-    
+
     function handlePickedHandler(number) {
         setPickedNumber(number);
         setIsGameOver(false);
@@ -26,14 +27,14 @@ export default function App() {
 
     function handleGameOver(guessRoundsNumber) {
         setIsGameOver(true);
-        setGuessRounds(guessRoundsNumber)
+        setGuessRounds(guessRoundsNumber);
     }
 
     let screen = <StartGameScreen onPickedHandler={handlePickedHandler} />;
 
     function startNewGameHandler() {
-        setPickedNumber(null)
-        setGuessRounds(0)
+        setPickedNumber(null);
+        setGuessRounds(0);
     }
 
     if (pickedNumber) {
@@ -43,22 +44,33 @@ export default function App() {
     }
 
     if (isGameOver && pickedNumber) {
-        screen = <GameOverScreen roundsNumber={guessRounds} userNumber={pickedNumber} onStartNewGame={startNewGameHandler} />;
+        screen = (
+            <GameOverScreen
+                roundsNumber={guessRounds}
+                userNumber={pickedNumber}
+                onStartNewGame={startNewGameHandler}
+            />
+        );
     }
     return (
-        <LinearGradient
-            colors={["#62041a", "#ddb52f"]}
-            style={styles.rootScreen}
-        >
-            <ImageBackground
-                source={require("./assets/images/background.png")}
-                resizeMode="cover"
+        <>
+            <StatusBar style="light" />
+            <LinearGradient
+                colors={["#62041a", "#ddb52f"]}
                 style={styles.rootScreen}
-                imageStyle={styles.bgImage}
             >
-                <SafeAreaView style={styles.rootScreen}>{screen}</SafeAreaView>
-            </ImageBackground>
-        </LinearGradient>
+                <ImageBackground
+                    source={require("./assets/images/background.png")}
+                    resizeMode="cover"
+                    style={styles.rootScreen}
+                    imageStyle={styles.bgImage}
+                >
+                    <SafeAreaView style={styles.rootScreen}>
+                        {screen}
+                    </SafeAreaView>
+                </ImageBackground>
+            </LinearGradient>
+        </>
     );
 }
 
